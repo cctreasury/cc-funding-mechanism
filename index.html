@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../style.css" rel="stylesheet">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class='cardstop' id="main-title">
+    </div>
+    <article>  
+        <div class='main'>
+        <form class="testing">
+            <div class="section_widgets">
+                <div class="graph_widget">
+                <a name="circle-groups"></a>
+                <h3 class="graph_title">Funds</h3>
+                <div class="graph" id="grps">
+                <div class="graph_item blue">
+                <span class="graph_item_title">
+                <span class="title">Proposal Funds</span>
+                </span>
+                <span class="graph_item_value">
+                <span class="value" id="bal-el" style="width: 100%;"></span>
+                </span>
+                </div>
+                <div class="graph_item blue">
+                <span class="graph_item_title">
+                <span class="title">Incoming</span>
+                </span>
+                <span class="graph_item_value">
+                <span class="value" id="save-el"></span>               
+                </span>
+                </div>
+                <div class="graph_item blue">
+                <span class="graph_item_title">
+                <span class="title">Wallet Balance</span>
+                </span>
+                <span class="graph_item_value">
+                <span class="value" id="save-el2"></span>
+                </span>
+                </div>
+                <br>
+                <h3 class="graph_title">Budget Items</h3>
+            </div>
+            </div>
+            <script src="index.js"></script>
+            </form> 
+        </div>
+    </article>    
+         <!-- We'll prepare our javascript's function for later -->
+</body>
+</html>
