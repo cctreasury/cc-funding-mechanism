@@ -109,7 +109,7 @@ window.onload = function() {
             document.getElementById("save-el").style.width = (totals.Incoming/data.budget*100)+"%"
             for (let i in totals) {
               if (i != "Incoming" && i != "outgoing" && i != "Other") {
-                totAv[i] = (totals.Incoming * 0.1866 - totals[i]).toFixed(2);
+                if (i !== "Unexpected-costs") {totAv[i] = (totals.Incoming * 0.1866 - totals[i]).toFixed(2);}
                 if (i == "Unexpected-costs") {totAv[i] = (totals.Incoming * 0.0666 - totals[i]).toFixed(2);}
                 b[i] = document.getElementById(l[i]);        
                 x[i] = (totAv[i]/totals2[i]*100).toFixed(2);
