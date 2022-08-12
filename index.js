@@ -21,6 +21,7 @@ const budgetI = [];
 const l = [];
 let totals = {};
 let totals2 = {};
+let totals3 = {};
 const b = []
 const x = []
 
@@ -60,6 +61,7 @@ window.onload = function() {
             // Get the ul with id of of userRepos
             var n = Object.keys(data.budgetItems).indexOf(i);
             totals[i] = 0;
+            totals3[i] = 0;
             let ul = document.getElementById('grps');
             // Create variable that will create li's to be added to ul
             let li = document.createElement('div');   
@@ -86,6 +88,7 @@ window.onload = function() {
               
           }
           totals.outgoing = 0;
+          totals3.outgoing = 0;
           
           async function downloadFromDownloadURLs(url) {
             const {data} = await axios.get(url);
@@ -123,19 +126,20 @@ window.onload = function() {
               for (let j in budgetI) {    
                 if ( y == budgetI[j]) {
                   totals[y] = totals[y] + (parseInt(bi[i].ada));
+                  totals3[y] = totals3[y] + (parseInt(bi[i].ada) * ((bi[i].exchangeRate === undefined) || isNaN(parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))) ? 0.5 : parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))));
                   totals.outgoing = totals.outgoing + (parseInt(bi[i].ada));
+                  totals3.outgoing = totals3.outgoing + ((parseFloat(bi[i].ada).toFixed(2)) * ((bi[i].exchangeRate === undefined) || isNaN(parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))) ? 0.5 : parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))));
                 }        
               }
             };
             balance = (data.lovelaces/1000000).toFixed(2);
             saveEl2.textContent = "₳ " + balance
-            document.getElementById("save-el2").style.width = (balance/topData.budget*100)+"%"
-            saveEl.textContent = "₳ " + totals.Incoming
-            document.getElementById("save-el").style.width = (totals.Incoming/topData.budget*100)+"%"
+            document.getElementById("save-el2").style.width = (balance/totals.Incoming*100)+"%"
+            saveEl.textContent = "USD " + (totals3.Incoming).toFixed(2) + " ( ₳ " + totals.Incoming + " )";
+            document.getElementById("save-el").style.width = (totals3.Incoming/topData.budget*100)+"%"
             for (let i in totals) {
               if (i != "Incoming" && i != "outgoing" && i != "Other") {
-                if (i !== "Unexpected-costs") {totAv[i] = (totals.Incoming * 0.1866 - totals[i]).toFixed(2);}
-                if (i == "Unexpected-costs") {totAv[i] = (totals.Incoming * 0.0666 - totals[i]).toFixed(2);}
+                totAv[i] = (totals.Incoming * 0.2 - totals[i]).toFixed(2)
                 b[i] = document.getElementById(l[i]);        
                 x[i] = (totAv[i]/totals2[i]*100).toFixed(2);
                 b[i].textContent = "₳ " + parseInt(totAv[i]).toFixed(2);   
