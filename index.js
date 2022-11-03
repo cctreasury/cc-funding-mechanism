@@ -2,7 +2,7 @@
 let value = {};
 let data2 = [];
 let orgEl = "treasuryguild";
-let repoEl = "treasury-v3";
+let repoEl = "treasury-system-v4";
 let walletEl = "";
 let fundJ = ""
 let projectJ = ""
@@ -26,6 +26,7 @@ const b = []
 const x = []
 
 let topData = {};
+let topData2 = {};
 
 const loaderContainer = document.querySelector('.loader');
 const dataContainer = document.querySelector('.main');
@@ -69,7 +70,7 @@ window.onload = function() {
             k = ("t" + `${n+1}`);
             l[i] = ("b" + `${n+1}`);
             li.className = "graph_item green";
-            if (n > 1) {
+            if (n > 2) {
             li.innerHTML = (`
             <span class="graph_item_title">
             <a href="https://github.com/${orgEl}/${repoEl}/tree/main/Transactions/${projectJ}/${fundJ}/${poolJ}/${i}" target="_blank">
@@ -116,38 +117,85 @@ window.onload = function() {
             return bi;
           }
 
+          async function walletStatus() {
+            const {data} = await axios.get(`https://pool.pm/wallet/${walletEl}`)
+            
+            topData2 = data;
+            balance = (topData2.lovelaces/1000000).toFixed(6);
+            
+          }
+
 
           async function getWallet() {
-            const {data} = await axios.get(`https://pool.pm/wallet/${walletEl}`)
+            await walletStatus();
             await loadData(orgEl, repoEl, projectJ, fundJ, poolJ);
             hideLoading();
+            let bulkB = "bulkTransactions"
+            totals[bulkB] = 0;
+            let bulkADA = 0;
             for (let i in bi) {
-              y = bi[i].budget.replace(/\s/g, '-')
-              for (let j in budgetI) {    
-                if ( y == budgetI[j]) {
-                  totals[y] = totals[y] + (parseFloat(bi[i].ada));
-                  totals3[y] = totals3[y] + (parseFloat(bi[i].ada) * ((bi[i].exchangeRate === undefined) || isNaN(parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))) ? 0.5 : parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))));
-                  totals.outgoing = totals.outgoing + (parseFloat(bi[i].ada));
-                  totals3.outgoing = totals3.outgoing + ((parseFloat(bi[i].ada).toFixed(2)) * ((bi[i].exchangeRate === undefined) || isNaN(parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))) ? 0.5 : parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))));
-                }        
+              if (bi[i].mdVersion) {   ///This is pulling data from new version "bulk" or single "Budget items"
+                for (let k in bi[i].contributions) {
+                  q = bi[i].contributions[k].label.replace(/\s/g, '-')
+                for (let j in budgetI) {   
+                  if ( y == budgetI[j]) {
+                  if ( bi[i].contributions[k].label !== "Incoming") {  
+                    for (let m in bi[i].contributions[k].contributors) {
+                      if (bi[i].contributions[k].contributors[m].ADA) {
+                        bulkADA = (parseFloat(bi[i].contributions[k].contributors[m].ADA?bi[i].contributions[k].contributors[m].ADA:0));
+                      } else if (bi[i].contributions[k].contributors[m].ada) {
+                        bulkADA = (parseFloat(bi[i].contributions[k].contributors[m].ada?bi[i].contributions[k].contributors[m].ada:0));
+                      } else { bulkADA = 0 }
+                      totals[q] = totals[q] + bulkADA;
+                      totals.outgoing = totals.outgoing + bulkADA;
+                  }
+                  } else if ( bi[i].contributions[k].label == "Incoming") {
+                    for (let m in bi[i].contributions[k].contributors) {
+                      if (bi[i].contributions[k].contributors[m].ADA) {
+                        bulkADA = (parseFloat(bi[i].contributions[k].contributors[m].ADA?bi[i].contributions[k].contributors[m].ADA:0));
+                      } else if (bi[i].contributions[k].contributors[m].ada) {
+                        bulkADA = (parseFloat(bi[i].contributions[k].contributors[m].ada?bi[i].contributions[k].contributors[m].ada:0));
+                      } else { bulkADA = 0 }
+                      totals[bi[i].contributions[k].label] = totals[bi[i].contributions[k].label] + bulkADA;       
+                  }
+                  }  
+                }     
+                }
+              }
+              } else {
+                y = bi[i].budget.replace(/\s/g, '-')    // THis is pulling data from old metadata
+                for (let j in budgetI) {    
+                  if ( y == budgetI[j]) {
+                    if (y !== 'bulkTransactions') {
+                      totals[y] = totals[y] + (parseFloat(bi[i].ada));
+                      totals3[y] = totals3[y] + (parseFloat(bi[i].ada) * ((bi[i].exchangeRate === undefined) || isNaN(parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))) ? 0.5 : parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))));
+                      if (y !== 'Incoming') {
+                        totals.outgoing = totals.outgoing + (parseFloat(bi[i].ada));
+                        totals3.outgoing = totals3.outgoing + ((parseFloat(bi[i].ada).toFixed(2)) * ((bi[i].exchangeRate === undefined) || isNaN(parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))) ? 0.5 : parseFloat((bi[i].exchangeRate).match(/\b\d+(?:.\d+)?/))));
+                      }
+                    }
+                  }        
+                }
               }
             };
-            balance = (data.lovelaces/1000000).toFixed(2);
+            console.log("totals.outgoing",totals.outgoing)
+            
             saveEl2.textContent = "₳ " + balance
             document.getElementById("save-el2").style.width = (balance/totals.Incoming*100)+"%"
             saveEl.textContent = "USD " + (totals3.Incoming).toFixed(2) + " ( ₳ " + totals.Incoming.toFixed(2) + " )";
             document.getElementById("save-el").style.width = (totals3.Incoming/topData.budget*100)+"%"
             for (let i in totals) {
-              if (i != "Incoming" && i != "outgoing" && i != "Other") {
+              
+              if (i != "Incoming" && i != "outgoing" && i != "Other" && i != "bulkTransactions") {
                 totAv[i] = (totals.Incoming * 0.2 - totals[i]).toFixed(2)
-                b[i] = document.getElementById(l[i]);        
+                b[i] = document.getElementById(l[i]);   
+                console.log("b[i]",b[i]);     
                 x[i] = (totAv[i]/totals2[i]*100).toFixed(2);
                 b[i].textContent = "₳ " + parseFloat(totAv[i]).toFixed(2);   
                 document.getElementById(`${l[i]}`).style.width = x[i]+"%"
-            console.log(totals2[i]);
+            console.log("totals",totals[i]);
               }
-            }
-            
+            }   
           }
           getWallet();
 })
