@@ -194,8 +194,8 @@ window.onload = function() {
                 totAv[i] = (totals.Incoming * 0.2 - totals[i]).toFixed(2)
                 b[i] = document.getElementById(l[i]);   
                 console.log("b[i]",b[i]);     
-                x[i] = (totAv[i]/totals2[i]*100).toFixed(2);
-                b[i].textContent = "₳ " + parseFloat(totAv[i]).toFixed(2);   
+                x[i] = (totAv[i]>0?totAv[i]/totals2[i]*100:0).toFixed(2);
+                b[i].textContent = "₳ " + parseFloat(totAv[i]>0?totAv[i]:0).toFixed(2);   
                 document.getElementById(`${l[i]}`).style.width = x[i]+"%"
             console.log("totals",totals[i]);
               }
