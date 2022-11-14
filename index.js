@@ -137,8 +137,12 @@ window.onload = function() {
               if (bi[i].mdVersion) {   ///This is pulling data from new version "bulk" or single "Budget items"
                 for (let k in bi[i].contributions) {
                   q = bi[i].contributions[k].label.replace(/\s/g, '-')
-                for (let j in budgetI) {   
-                  if ( y == budgetI[j]) {
+                  if (q == 'CC-Bounties' || q == 'Swarm-bounties') {
+                    q = 'Stake-Pool-Operators'
+                  }
+                for (let j in budgetI) {  
+                  console.log('q',q) 
+                  if ( q == budgetI[j]) {
                   if ( bi[i].contributions[k].label !== "Incoming") {  
                     for (let m in bi[i].contributions[k].contributors) {
                       if (bi[i].contributions[k].contributors[m].ADA) {
