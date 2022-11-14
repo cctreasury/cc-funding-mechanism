@@ -195,7 +195,7 @@ window.onload = function() {
                 b[i] = document.getElementById(l[i]);   
                 console.log("b[i]",b[i]);     
                 x[i] = (totAv[i]>0?totAv[i]/totals2[i]*100:0).toFixed(2);
-                b[i].textContent = "₳ " + parseFloat(totAv[i]>0?totAv[i]:0).toFixed(2);   
+                b[i].textContent = "₳ " + parseFloat(totAv[i]).toFixed(2);   
                 document.getElementById(`${l[i]}`).style.width = x[i]+"%"
             console.log("totals",totals[i]);
               }
